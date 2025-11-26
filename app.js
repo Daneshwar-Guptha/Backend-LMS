@@ -7,7 +7,7 @@ const Enrollment = require('./model/Enrollement');
 const authRoutes = require('./Routes/authRoutes');
 const cookieParser = require('cookie-parser');
 const userRoutes = require('./Routes/UserRoutes');
-const InstructorRoutes = require('./Routes/InstructorRoutes');
+const InstructorRouter = require('./Routes/InstructorRoutes');
 const cors = require('cors')
 
 
@@ -20,7 +20,8 @@ app.use(cors({
 
 app.use('/auth',authRoutes);
 app.use('/user',userRoutes);
-app.use('/instructor',InstructorRoutes)
+app.use('/instructor',InstructorRouter)
+
 
 
 DBConnection()

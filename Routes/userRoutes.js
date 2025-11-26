@@ -4,6 +4,9 @@ const Course = require('../model/Course');
 const Enrollement = require('../model/Enrollement');
 const userRoutes = express.Router();
 
+const upload = require("../utils/multer");
+const User = require('../model/User');
+
 userRoutes.get('/courses', auth, async (req, res) => {
 
   try {
@@ -56,6 +59,32 @@ userRoutes.get('/courses/my-courses', auth, async (req, res) => {
     res.status(400).json(error.message);
   }
 })
+
+userRoutes.put("/profile/photo", auth, upload.single("photo"), async (req, res) => {
+  try {
+    console.log("Profile photo API hit");
+
+    if (!req.file) return res.status(400).send("No file uploaded");
+
+    const imageUrl = req.file.path; // Cloudinary URL
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { profileImage: imageUrl },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      user: updatedUser
+    });
+
+  } catch (error) {
+    res.status(500).send(error.message);
+    console.log(error.message);
+  }
+});
+
 
 
 

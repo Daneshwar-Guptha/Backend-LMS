@@ -10,6 +10,7 @@ const { auth } = require('../middleware/auth');
 const { validateSignupData } = require('../utils/validations');
 
 
+
 authRoutes.post('/user/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -67,7 +68,7 @@ authRoutes.post('/login', async (req, res) => {
         const userData = await User.findOne({ email });
         const JWT_SECRET = process.env.JWT_SECRET;
         if (!userData) {
-            res.clearCookie('token');
+           
             throw new Error("please register first");
         }
         const passwordValid = await userData.isPasswordMatch(password)
@@ -76,9 +77,12 @@ authRoutes.post('/login', async (req, res) => {
         }
         const token = jwt.sign({ id: userData._id }, JWT_SECRET, { expiresIn: '1d' });
         res.cookie('token', token, {
-            httpOnly: false
+            httpOnly: true
         });
-        res.status(200).send("successfuly login");
+        res.status(200).json({
+            "userData":userData,
+            message:"successful login",
+        });
     } catch (error) {
         res.status(400).send(error.message);
     }

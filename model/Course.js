@@ -1,4 +1,5 @@
-const { Schema, model, mongoose } = require("mongoose");
+const mongoose = require("mongoose");
+const { Schema, model } = mongoose;
 
 const courseSchema = new Schema(
   {
@@ -7,40 +8,25 @@ const courseSchema = new Schema(
       required: [true, "Course title is required"],
       trim: true,
     },
+
     description: {
       type: String,
       required: [true, "Course description is required"],
       trim: true,
     },
+
     instructorId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
     price: {
       type: Number,
       required: [true, "Course price is required"],
       min: 0,
     },
-    sections: [
-      {
 
-        title: String,
-        lessons: [
-          {
-            title: { type: String, required: true },
-            videoUrl: { type: String },
-            videoPublicId: String,
-
-            cheatSheetUrl: { type: String },
-            cheatSheetPublicId: String,
-            duration: { type: Number }
-          }
-        ]
-
-      }
-    ]
-    ,
     thumbnail: {
       type: String,
       default: "",
@@ -50,10 +36,29 @@ const courseSchema = new Schema(
       type: Boolean,
       default: false,
     },
+
+    sections: [
+      {
+        title: { type: String, required: true },
+
+        lessons: [
+          {
+            title: { type: String, required: true },
+
+            videoUrl: { type: String, default: "" },
+            videoPublicId: { type: String, default: "" },
+
+            cheatSheetUrl: { type: String, default: "" },
+            cheatSheetPublicId: { type: String, default: "" },
+
+            duration: { type: Number, default: 0 },
+          },
+        ],
+      },
+    ],
   },
+
   { timestamps: true }
 );
-
-
 
 module.exports = model("Course", courseSchema);

@@ -87,13 +87,13 @@ const adminAuth = async (req, res, next) => {
 };
 
 // ----------------------- ROLE BASED (Flexible Middleware) -----------------------
-const RoleBased = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role))
-      return res.status(403).json({ message: "You do not have permission." });
+// const RoleBased = (...roles) => {
+//   return (req, res, next) => {
+//     if (!roles.includes(req.user.role))
+//       return res.status(403).json({ message: "You do not have permission." });
 
-    next();
-  };
-};
+//     next();
+//   };
+// };
 
-module.exports = { auth, instructorAuth, adminAuth, RoleBased };
+module.exports = { auth, instructorAuth, adminAuth };

@@ -1,110 +1,48 @@
 const express = require("express");
 const instructorRouter = express.Router();
-
 const Course = require("../model/Course");
 const Enrollment = require("../model/Enrollement");
-
-// IMPORTS YOU MISSED
 const upload = require("../utils/multer");
-const { auth } = require("../middleware/auth");
-const { RoleBased } = require("../middleware/auth");
-
+const { auth, instructorAuth } = require("../middleware/auth");
 const {
   uploadToCloudinary,
-  deleteFromCloudinary
+  deleteFromCloudinary,
 } = require("../utils/cloudinaryHelper");
+const multer = require("multer");
 
 // -------- VIEW PROFILE --------
-instructorRouter.get("/view", auth, RoleBased("instructor"), (req, res) => {
+instructorRouter.get("/view", auth, instructorAuth, (req, res) => {
   res.status(200).json(req.user);
 });
 
-// -------- ADD COURSE --------
 instructorRouter.post(
-  "/add/course",
+  "/addCourse",
   auth,
-  RoleBased("instructor"),
+  instructorAuth,
   upload.fields([
+    { name: "thumbnail", maxCount: 1 },
     { name: "coverPhoto", maxCount: 1 },
-    { name: "thumbnail", maxCount: 1 }
   ]),
   async (req, res) => {
     try {
-      const { title, description, price, startDate, endDate } = req.body;
+      console.log(req.files);
+      const thumbnail = req.files.thumbnail[0].path;
+      const thumbnailPublicId = req.files.thumbnail[0].filename;
 
-      // ---------------- VALIDATION ----------------
-      if (!title) {
-        return res.status(400).json({ message: "Course title is required" });
-      }
-      if (!description) {
-        return res.status(400).json({ message: "Course description is required" });
-      }
-      if (!price) {
-        return res.status(400).json({ message: "Course price is required" });
-      }
+      const coverPhoto = req.files.coverPhoto[0].path;
+      const coverPhotoPublicId = req.files.coverPhoto[0].filename;
 
-      // ---------------- FILE UPLOADS ----------------
-      let coverPhotoUrl = "";
-      let coverPhotoPublicId = "";
-
-      if (req.files && req.files.coverPhoto) {
-        const cover = await uploadToCloudinary(
-          req.files.coverPhoto[0].buffer,
-          "course_covers"
-         
-        );
-         console.log(req.files)
-        coverPhotoUrl = cover.secure_url;
-        coverPhotoPublicId = cover.public_id;
-      }
-
-      let thumbnailUrl = "";
-      let thumbnailPublicId = "";
-
-      if (req.files && req.files.thumbnail) {
-        const thumb = await uploadToCloudinary(
-          req.files.thumbnail[0].buffer,
-          "course_thumbnails"
-        );
-        thumbnailUrl = thumb.secure_url;
-        thumbnailPublicId = thumb.public_id;
-      }
-
-      // ---------------- CREATE COURSE ----------------
-      const course = new Course({
-        title,
-        description,
-        price,
-        startDate,
-        endDate,
-        instructorId: req.user._id,
-
-        thumbnail: thumbnailUrl,       // For front-end card UI
+      res.json({
+        thumbnail,
         thumbnailPublicId,
-
-        coverPhoto: coverPhotoUrl,     // Optional
+        coverPhoto,
         coverPhotoPublicId,
-
-        sections: []                   // Empty initially
       });
-
-      const savedCourse = await course.save();
-
-      return res.status(201).json({
-        message: "Course created successfully",
-        data: savedCourse
-      });
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: err.message });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
   }
 );
-
-
-
-
 
 
 module.exports = instructorRouter;

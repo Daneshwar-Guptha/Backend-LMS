@@ -51,7 +51,9 @@ instructorRouter.post(
         const cover = await uploadToCloudinary(
           req.files.coverPhoto[0].buffer,
           "course_covers"
+         
         );
+         console.log(req.files)
         coverPhotoUrl = cover.secure_url;
         coverPhotoPublicId = cover.public_id;
       }

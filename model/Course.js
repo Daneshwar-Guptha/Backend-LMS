@@ -27,7 +27,22 @@ const courseSchema = new Schema(
       min: 0,
     },
 
+    // ---------------- THUMBNAIL ----------------
     thumbnail: {
+      type: String,
+      default: "",
+    },
+    thumbnailPublicId: {
+      type: String,
+      default: "",
+    },
+
+    // ---------------- COVER PHOTO ----------------
+    coverPhoto: {
+      type: String,
+      default: "",
+    },
+    coverPhotoPublicId: {
       type: String,
       default: "",
     },
@@ -37,6 +52,7 @@ const courseSchema = new Schema(
       default: false,
     },
 
+    // ---------------- SECTIONS & LESSONS ----------------
     sections: [
       {
         title: { type: String, required: true },

@@ -1,16 +1,34 @@
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("./cloudinary");
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "LMS",   // Folder name in Cloudinary
-    allowed_formats: ["jpg", "png", "jpeg", "webp", "mp4", "pdf"],
-  },
+// ✅ Store files ONLY in RAM (Buffer)
+const storage = multer.memoryStorage();
+
+// ✅ File type validation
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "video/mp4",
+    "video/x-matroska", // MKV
+    "application/pdf",
+  ];
+
+  if (!allowedTypes.includes(file.mimetype)) {
+    return cb(
+      new Error("Only images, videos, and PDFs are allowed"),
+      false
+    );
+  }
+
+  cb(null, true);
+};
+
+// ✅ 100MB limit
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter,
 });
-
-const upload = multer({ storage: storage });
-
 
 module.exports = upload;

@@ -1,8 +1,17 @@
+
+
+
 const cloudinary = require("./cloudinary");
 
-// Upload buffer to Cloudinary (image / video / raw)
-exports.uploadToCloudinary = (buffer, folder, resourceType = "image") => {
+exports.uploadToCloudinary = (buffer, folder, mimetype) => {
   return new Promise((resolve, reject) => {
+
+    const resourceType = mimetype.startsWith("video")
+      ? "video"
+      : mimetype === "application/pdf"
+      ? "raw"
+      : "image";
+
     cloudinary.uploader.upload_stream(
       {
         folder,
@@ -16,9 +25,11 @@ exports.uploadToCloudinary = (buffer, folder, resourceType = "image") => {
   });
 };
 
-// Delete from Cloudinary
+
+// ✅ Delete from Cloudinary
 exports.deleteFromCloudinary = async (publicId, resourceType = "image") => {
   return await cloudinary.uploader.destroy(publicId, {
     resource_type: resourceType,
   });
 };
+

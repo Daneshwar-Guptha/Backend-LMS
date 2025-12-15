@@ -23,7 +23,7 @@ instructorRouter.get("/profile", auth, instructorAuth, async (req, res) => {
     res.status(400).send("something went wrong " + error.message);
   }
 });
-
+  
 // ------------ Add Course -------------
 instructorRouter.post(
   "/addCourse",

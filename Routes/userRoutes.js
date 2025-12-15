@@ -20,6 +20,7 @@ userRoutes.get("/courses/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const course = await Course.findById(id);
+   
 
     if (!course) {
       return res.status(404).send("Invalid course ID");
@@ -33,7 +34,8 @@ userRoutes.get("/courses/:id", auth, async (req, res) => {
 
 userRoutes.post("/courses/:id/enroll", auth, async (req, res) => {
   try {
-    const { id } = req.body;
+   
+    const { id } = req.params;
     const userData = req.user;
     const EnrolledData = await Enrollement({
       userId: userData._id,
@@ -42,6 +44,7 @@ userRoutes.post("/courses/:id/enroll", auth, async (req, res) => {
     await EnrolledData.save();
     res.status(200).json(EnrolledData);
   } catch (error) {
+    console.log(error)
     res.status(400).json(error.message);
   }
 }); // Testing was not completed

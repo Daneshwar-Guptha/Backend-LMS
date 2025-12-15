@@ -102,6 +102,11 @@ instructorRouter.post(
   "/course/:courseId/section",
   auth,
   instructorAuth,
+  upload.fields([
+    { name: "videoUrl", maxCount: 1 },
+    { name: "cheatSheetUrl", maxCount: 1 },
+  ]),
+
   async (req, res) => {
     try {
       const { courseId } = req.params;

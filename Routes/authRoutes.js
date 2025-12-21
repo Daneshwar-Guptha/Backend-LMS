@@ -67,6 +67,7 @@ authRoutes.post('/login', async (req, res) => {
         const { email, password } = req.body;
         const userData = await User.findOne({ email });
         const JWT_SECRET = process.env.JWT_SECRET;
+       
         if (!userData) {
            
             throw new Error("please register first");
@@ -85,6 +86,7 @@ authRoutes.post('/login', async (req, res) => {
         });
     } catch (error) {
         res.status(400).send(error.message);
+        
     }
 });
 

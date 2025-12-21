@@ -326,6 +326,21 @@ instructorRouter.delete(
   }
 );
 
+//------ get Courses -------
+instructorRouter.get("/courses", auth, instructorAuth, async (req, res) => {
+  try {
+    const instructorId = req.user._id;
+
+    const courses = await Course.find({ instructorId }).sort({ createdAt: -1 });
+
+    res.status(200).json(courses);
+
+  } catch (error) {
+    res.status(500).json({ error: "Failed to load instructor courses" });
+  }
+});
+
+
 //----- Instructor Courses ----------
 // how many enrolles 
 // recently uplaod
